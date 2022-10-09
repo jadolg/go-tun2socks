@@ -48,6 +48,7 @@ type CmdArgs struct {
 	UdpTimeout      *time.Duration
 	LogLevel        *string
 	DnsFallback     *bool
+	SkipGatewayFor  *string
 }
 
 type cmdFlag uint
@@ -97,7 +98,7 @@ func main() {
 	args.BlockOutsideDns = flag.Bool("blockOutsideDns", false, "Prevent DNS leaks by blocking plaintext DNS queries going out through non-TUN interface (may require admin privileges) (Windows only) ")
 	args.ProxyType = flag.String("proxyType", "socks", "Proxy handler type")
 	args.LogLevel = flag.String("loglevel", "info", "Logging level. (debug, info, warn, error, none)")
-
+	args.SkipGatewayFor = flag.String("skipGatewayFor", "", "Will set the default gateway and skip this CIDR (ex: 38.68.135.21/32) (Linux only)")
 	flag.Parse()
 
 	if *args.Version {
@@ -130,7 +131,7 @@ func main() {
 
 	// Open the tun device.
 	dnsServers := strings.Split(*args.TunDns, ",")
-	tunDev, err := tun.OpenTunDevice(*args.TunName, *args.TunAddr, *args.TunGw, *args.TunMask, dnsServers, *args.TunPersist)
+	tunDev, err := tun.OpenTunDevice(*args.TunName, *args.TunAddr, *args.TunGw, *args.TunMask, dnsServers, *args.TunPersist, *args.SkipGatewayFor)
 	if err != nil {
 		log.Fatalf("failed to open tun device: %v", err)
 	}
