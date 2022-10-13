@@ -1,0 +1,25 @@
+name: Build and release
+
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      
+    - name: Install dependencies
+      run: make clean && make build
+    
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: build/*
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
