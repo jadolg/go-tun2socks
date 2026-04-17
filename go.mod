@@ -1,6 +1,6 @@
 module github.com/jadolg/go-tun2socks
 
-go 1.19
+go 1.26.2
 
 require (
 	github.com/jackpal/gateway v1.0.7
